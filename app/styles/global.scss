@@ -1,0 +1,22 @@
+.text-green {
+  color: hsla(160, 100%, 37%, 1);
+}
+
+.blog-content a {
+  color: hsla(160, 100%, 37%, 1);
+}
+
+.blog-content :is(h1 a, h2 a, h3 a, h4 a, h5 a, h6 a) {
+  color: inherit !important;
+  text-decoration: none;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
