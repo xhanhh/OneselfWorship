@@ -1,8 +1,6 @@
 import path from 'node:path'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
-import prismaClient from '@prisma/client'
-
-const { PrismaClient } = prismaClient
+import { PrismaClient } from '~~/app/generated/prisma/client'
 
 const prismaClientSingleton = () => {
   const adapter = new PrismaBetterSqlite3({
