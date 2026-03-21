@@ -1,10 +1,9 @@
-import path from 'node:path'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '~~/app/generated/prisma/client'
 
 const prismaClientSingleton = () => {
-  const adapter = new PrismaBetterSqlite3({
-    url: resolveSqliteDatabaseUrl(process.env.DATABASE_URL)
+  const adapter = new PrismaPg({
+    connectionString: resolveDatabaseUrl()
   })
 
   return new PrismaClient({ adapter })
@@ -20,22 +19,16 @@ export default prisma
 
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
 
-function resolveSqliteDatabaseUrl(databaseUrl?: string) {
-  const normalizedUrl = databaseUrl?.trim() || 'file:./dev.db'
+function resolveDatabaseUrl() {
+  const databaseUrl = process.env.POSTGRES_PRISMA_URL
+    ?? process.env.POSTGRES_URL
+    ?? process.env.DATABASE_URL
 
-  if (!normalizedUrl.startsWith('file:')) {
-    throw new Error('DATABASE_URL must use the sqlite file: protocol.')
+  if (!databaseUrl?.trim()) {
+    throw new Error(
+      'Missing database URL. Set POSTGRES_PRISMA_URL (recommended on Vercel + Supabase) or DATABASE_URL.'
+    )
   }
 
-  const databasePath = normalizedUrl.slice('file:'.length)
-
-  if (!databasePath) {
-    throw new Error('DATABASE_URL must include a sqlite file path.')
-  }
-
-  if (path.isAbsolute(databasePath)) {
-    return `file:${databasePath}`
-  }
-
-  return `file:${path.resolve(process.cwd(), databasePath)}`
+  return databaseUrl
 }
