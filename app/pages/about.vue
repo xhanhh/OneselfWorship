@@ -14,14 +14,14 @@ useSeoMeta({
     <div class="mx-auto max-w-3xl">
       <UCard class="rounded-3xl py-4 px-6 sm:p-8">
         <div class="space-y-4">
-          <UBadge color="primary" variant="soft" label="关于我们" />
+          <UBadge color="primary" variant="soft" label="关于" />
 
           <div class="space-y-3 px-0.5">
             <h1 class="text-3xl font-extrabold noto-serif text-highlighted sm:text-4xl">
               一个用于在线祭扫的开源小网页
             </h1>
             <p class="text-base leading-8 text-toned">
-              这项目是一人加一Codex写的，本来想拿来清明节祭自己的，纯发癫没别的
+              这项目是一人加一Codex写的，本来想拿来清明节祭自己的，纯发癫没别的。
             </p>
             <p class="text-base leading-8 text-toned">
               这玩意是开源的，你也可以加入我们一起发癫（贡献）
