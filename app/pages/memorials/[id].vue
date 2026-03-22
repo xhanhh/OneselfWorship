@@ -401,16 +401,17 @@ function onlyCopyLink() {
           <UButton
             color="neutral"
             variant="ghost"
-            label="下载祭念帖"
-            icon="i-lucide-download"
-            @click="handleDownloadPoster"
+            :label="canNativeSharePoster ? '分享' : '当前设备不支持分享'"
+            icon="i-lucide-share-2"
+            :disabled="!canNativeSharePoster"
+            @click="handleSharePoster"
           />
           <UButton
-            color="primary"
-            variant="solid"
-            :label="canNativeSharePoster ? '分享祭念帖' : '下载后分享'"
-            icon="i-lucide-share-2"
-            @click="handleSharePoster"
+              color="primary"
+              variant="solid"
+              label="下载祭念帖"
+              icon="i-lucide-download"
+              @click="handleDownloadPoster"
           />
         </div>
       </template>
