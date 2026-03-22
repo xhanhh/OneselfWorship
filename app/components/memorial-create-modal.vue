@@ -147,7 +147,7 @@ function getErrorMessage(error: unknown) {
           />
         </UFormField>
 
-        <UFormField label="人机验证" name="turnstileToken" required>
+        <UFormField label="验证码" description="加载可能需要时间，请耐心等待" name="turnstileToken" required>
           <div class="rounded-2xl border border-default bg-elevated/50 p-4">
             <ClientOnly>
               <NuxtTurnstile ref="turnstileRef" v-model="formState.turnstileToken" />

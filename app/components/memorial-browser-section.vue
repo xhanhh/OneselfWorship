@@ -493,7 +493,7 @@ function getErrorMessage(currentError: unknown) {
   <UModal
     v-model:open="verifySearchOpen"
     title="请完成验证以查询祭扫"
-    description="在查询前，请先完成 Cloudflare 验证以确保您是人"
+    description="在查询前，请先完成 Cloudflare 验证以确保您是人。加载可能需要时间，请耐心等待。"
     :ui="{ content: 'sm:max-w-lg' }"
   >
     <template #body>

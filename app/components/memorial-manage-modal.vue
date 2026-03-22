@@ -214,7 +214,7 @@ function getErrorMessage(error: unknown) {
           <UInput v-model="formState.contactEmail" size="lg" type="email" maxlength="254" placeholder="请输入创建时填写的邮箱或管理员邮箱" class="w-full" />
         </UFormField>
 
-        <UFormField label="人机验证" name="turnstileToken" required>
+        <UFormField label="验证码" description="加载可能需要时间，请耐心等待" name="turnstileToken" required>
           <div class="rounded-2xl border border-default bg-elevated/50 p-4">
             <ClientOnly>
               <NuxtTurnstile ref="turnstileRef" v-model="formState.turnstileToken" />
