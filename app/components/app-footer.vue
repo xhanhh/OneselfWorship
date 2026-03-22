@@ -1,9 +1,5 @@
 <script setup lang="ts">
 
-import {useTime} from "~/composables/useTime";
-
-const time = useTime();
-
 </script>
 
 <template>

@@ -21,7 +21,7 @@ useSeoMeta({
               一个用于在线祭扫的开源小网页
             </h1>
             <p class="text-base leading-8 text-toned">
-              这项目是一人加一Codex写的，本来想拿来清明节祭自己的，纯发癫没别的。
+              这项目是一人加一 Codex 写的，基于 AGPLv3 协议，本来想拿来清明节祭自己的，纯发癫没别的。
             </p>
             <p class="text-base leading-8 text-toned">
               这玩意是开源的，你也可以加入我们一起发癫（贡献）
@@ -43,7 +43,8 @@ useSeoMeta({
               我们不为该网站上的任何信息负责，它们可能纯属虚构，我们也不保证其的真实性，祭奠对象的名字可能会有重合，请勿强行加以关联。
             </p>
             <p class="text-base leading-8 text-toned">
-              如果您认为相关内容侵犯到了您的权益，请您为我们发送邮件，我们将协助您解决问题<a>myxhan@lunawiki.org</a>。
+              如果您认为相关内容侵犯到了您的权益，请您为我们发送邮件，我们将协助您解决问题
+              <a href="mailto:myxhan@lunawiki.org" class="text-green">myxhan@lunawiki.org</a>。
             </p>
           </div>
 
