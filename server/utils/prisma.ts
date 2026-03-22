@@ -1,13 +1,9 @@
-import { PrismaPg } from '@prisma/adapter-pg'
+import { withAccelerate } from '@prisma/extension-accelerate'
 import { PrismaClient } from '~~/app/generated/prisma/client'
 
-const prismaClientSingleton = () => {
-  const adapter = new PrismaPg({
-    connectionString: resolveDatabaseUrl()
-  })
-
-  return new PrismaClient({ adapter })
-}
+const prismaClientSingleton = () => new PrismaClient({
+  accelerateUrl: resolveAccelerateUrl()
+}).$extends(withAccelerate())
 
 declare const globalThis: {
   prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
@@ -19,16 +15,14 @@ export default prisma
 
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
 
-function resolveDatabaseUrl() {
-  const databaseUrl = process.env.POSTGRES_PRISMA_URL
-    ?? process.env.POSTGRES_URL
-    ?? process.env.DATABASE_URL
+function resolveAccelerateUrl() {
+  const accelerateUrl = process.env.DATABASE_URL
 
-  if (!databaseUrl?.trim()) {
+  if (!accelerateUrl?.trim()) {
     throw new Error(
-      'Missing database URL. Set POSTGRES_PRISMA_URL (recommended on Vercel + Supabase) or DATABASE_URL.'
+      'Missing Prisma Accelerate URL. Set DATABASE_URL to the prisma:// URL from Prisma Accelerate.'
     )
   }
 
-  return databaseUrl
+  return accelerateUrl
 }

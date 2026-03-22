@@ -3,12 +3,9 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-const databaseUrl = process.env.POSTGRES_PRISMA_URL
-  ?? process.env.POSTGRES_URL
-  ?? process.env.DATABASE_URL;
-
-const directUrl = process.env.POSTGRES_URL_NON_POOLING
-  ?? process.env.DIRECT_URL;
+const directUrl = process.env.DIRECT_URL
+  ?? buildSupabaseDirectUrl()
+  ?? process.env.POSTGRES_URL_NON_POOLING;
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -16,7 +13,19 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: databaseUrl,
-    directUrl,
+    url: directUrl,
   },
 });
+
+function buildSupabaseDirectUrl() {
+  const host = process.env.POSTGRES_HOST;
+  const database = process.env.POSTGRES_DATABASE;
+  const user = process.env.POSTGRES_USER;
+  const password = process.env.POSTGRES_PASSWORD;
+
+  if (!host || !database || !user || !password) {
+    return undefined;
+  }
+
+  return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:5432/${database}?sslmode=require`;
+}
