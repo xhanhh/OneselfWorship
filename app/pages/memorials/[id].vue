@@ -7,8 +7,6 @@ import { useCopyText, useCurrentPageLink } from '~/composables/useVue'
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
-const turnstileRef = ref<{ reset?: () => void } | null>(null)
-const tributeToken = ref('')
 const tributePending = ref(false)
 const posterPending = ref(false)
 const posterPreviewOpen = ref(false)
@@ -22,6 +20,8 @@ const copyResetTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 const id = computed(() => Number(route.params.id || 0))
 const currentLink = useCurrentPageLink(computed(() => `/memorials/${id.value}`))
 const canNativeSharePoster = computed(() => import.meta.client && !!posterFile.value && !!navigator.share && !!navigator.canShare?.({ files: [posterFile.value] }))
+const posterWidth = 1200
+const posterHeight = 880
 
 const { data, error } = await useFetch<ApiResponse<GetMemorialDetailResponseData>>(
   `/api/memorials/${id.value}`,
@@ -114,11 +114,7 @@ async function handlePreviewMemorialCard() {
   posterPending.value = true
 
   try {
-    const posterArrayBuffer = await $fetch<ArrayBuffer>(`/api/memorials/${id.value}/poster`, {
-      responseType: 'arrayBuffer'
-    })
-
-    const blob = new Blob([posterArrayBuffer], { type: 'image/png' })
+    const blob = await createPosterBlob()
     const fileName = `memorial-${memorial.value.id}.png`
     const file = new File([blob], fileName, { type: 'image/png' })
 
@@ -175,26 +171,13 @@ async function submitTribute() {
     return
   }
 
-  if (!tributeToken.value) {
-    toast.add({
-      title: '请先完成验证码',
-      description: '为防止滥用，请先点击 Cloudflare 验证码完成验证，方可祭扫。',
-      color: 'warning',
-      icon: 'i-lucide-shield-alert'
-    })
-    return
-  }
-
   tributePending.value = true
 
   try {
     const response = await $fetch<ApiResponse<CreateTributeResponseData>>(
       `/api/memorials/${id.value}/tribute`,
       {
-        method: 'POST',
-        body: {
-          turnstileToken: tributeToken.value
-        }
+        method: 'POST'
       }
     )
 
@@ -218,8 +201,6 @@ async function submitTribute() {
     })
   } finally {
     tributePending.value = false
-    tributeToken.value = ''
-    nextTick(() => turnstileRef.value?.reset?.())
   }
 }
 
@@ -244,6 +225,189 @@ function onlyCopyLink() {
         icon: 'i-lucide-copy-check'
       }
   )
+}
+
+async function createPosterBlob() {
+  if (!import.meta.client) {
+    throw new Error('Poster generation is only available in the browser')
+  }
+
+  await document.fonts?.ready
+
+  const canvas = document.createElement('canvas')
+  canvas.width = posterWidth
+  canvas.height = posterHeight
+
+  const context = canvas.getContext('2d')
+
+  if (!context) {
+    throw new Error('Canvas context is unavailable')
+  }
+
+  context.fillStyle = '#ffffff'
+  context.fillRect(0, 0, posterWidth, posterHeight)
+
+  drawRoundedRect(context, 844, 96, 260, 64, 32, '#ffffff', '#000000', 3)
+
+  context.fillStyle = '#000000'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.font = `700 30px ${getPosterFontFamily()}`
+  context.fillText(`已祭扫 ${memorial.value.tributeCount} 次`, 974, 130)
+
+  context.textAlign = 'left'
+  context.textBaseline = 'alphabetic'
+  context.font = `700 58px ${getPosterFontFamily()}`
+  context.fillText('祭念扫墓', 96, 150)
+
+  context.font = `700 86px ${getPosterFontFamily()}`
+  context.fillText(limitText(context, memorial.value.name, 700), 96, 254)
+
+  context.font = `400 38px ${getPosterFontFamily()}`
+  const descriptionLines = wrapPosterText(
+    context,
+    formatPosterDescription(memorial.value.description),
+    700,
+    2
+  )
+
+  descriptionLines.forEach((line, index) => {
+    context.fillText(line, 96, 360 + index * 52)
+  })
+
+  const qrImage = await loadImage(await renderQrDataUrl(currentLink.value))
+  context.drawImage(qrImage, 96, 480, 310, 310)
+
+  context.font = `700 40px ${getPosterFontFamily()}`
+  context.fillText('扫描二维码祭扫', 450, 654)
+
+  const blob = await canvasToBlob(canvas)
+
+  if (!blob) {
+    throw new Error('Failed to export poster image')
+  }
+
+  return blob
+}
+
+async function renderQrDataUrl(value: string) {
+  const uqr = await import('uqr')
+  const qrSvg = uqr.renderSVG(value, {
+    pixelSize: 10,
+    border: 1,
+    whiteColor: '#ffffff',
+    blackColor: '#000000'
+  }) as string
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(qrSvg)}`
+}
+
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error('Image loading failed'))
+    image.src = src
+  })
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement) {
+  return new Promise<Blob | null>((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), 'image/png')
+  })
+}
+
+function drawRoundedRect(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+  fillStyle: string,
+  strokeStyle: string,
+  lineWidth: number
+) {
+  context.beginPath()
+  context.moveTo(x + radius, y)
+  context.arcTo(x + width, y, x + width, y + height, radius)
+  context.arcTo(x + width, y + height, x, y + height, radius)
+  context.arcTo(x, y + height, x, y, radius)
+  context.arcTo(x, y, x + width, y, radius)
+  context.closePath()
+  context.fillStyle = fillStyle
+  context.fill()
+  context.lineWidth = lineWidth
+  context.strokeStyle = strokeStyle
+  context.stroke()
+}
+
+function wrapPosterText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  maxLines: number
+) {
+  const lines: string[] = []
+  let currentLine = ''
+  let cursor = 0
+
+  while (cursor < text.length && lines.length < maxLines) {
+    const character = text[cursor]
+    const nextLine = currentLine + character
+
+    if (context.measureText(nextLine).width <= maxWidth) {
+      currentLine = nextLine
+      cursor += 1
+      continue
+    }
+
+    if (!currentLine) {
+      currentLine = character
+      cursor += 1
+    }
+
+    lines.push(currentLine)
+    currentLine = ''
+  }
+
+  if (lines.length < maxLines && currentLine) {
+    lines.push(currentLine)
+  }
+
+  if (cursor < text.length && lines.length) {
+    lines[lines.length - 1] = appendEllipsis(context, lines[lines.length - 1], maxWidth)
+  }
+
+  return lines
+}
+
+function appendEllipsis(context: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  let output = text
+  const ellipsis = '...'
+
+  while (output && context.measureText(output + ellipsis).width > maxWidth) {
+    output = output.slice(0, -1)
+  }
+
+  return `${output}${ellipsis}`
+}
+
+function limitText(context: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  if (context.measureText(text).width <= maxWidth) {
+    return text
+  }
+
+  return appendEllipsis(context, text, maxWidth)
+}
+
+function formatPosterDescription(value: string) {
+  const normalizedValue = value.replace(/\s+/g, ' ').trim()
+  return normalizedValue ? `“${normalizedValue}”` : ''
+}
+
+function getPosterFontFamily() {
+  return '"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun","Microsoft YaHei","PingFang SC",serif'
 }
 </script>
 
@@ -279,7 +443,7 @@ function onlyCopyLink() {
                   </UBadge>
 
                   <div class="min-w-0 space-y-2">
-                    <h1 class="truncate text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl">
+                    <h1 class="truncate text-3xl noto-serif font-extrabold tracking-tight text-highlighted sm:text-4xl">
                       {{ memorial.name }}
                     </h1>
                     <p class="block max-w-full truncate text-sm text-muted underline underline-offset-4 cursor-pointer" @click="onlyCopyLink">
@@ -351,18 +515,6 @@ function onlyCopyLink() {
                     </p>
                   </div>
                 </div>
-              </div>
-
-              <div class="rounded-2xl border border-default bg-elevated/10 p-4">
-                <ClientOnly>
-                  <NuxtTurnstile ref="turnstileRef" v-model="tributeToken" />
-
-                  <template #fallback>
-                    <div class="text-sm text-muted">
-                      正在加载 Cloudflare Turnstile 验证...
-                    </div>
-                  </template>
-                </ClientOnly>
               </div>
 
               <UButton

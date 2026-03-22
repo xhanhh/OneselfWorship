@@ -16,19 +16,23 @@ useSeoMeta({
         <div class="space-y-4">
           <UBadge color="primary" variant="soft" label="关于我们" />
 
-          <div class="space-y-3">
-            <h1 class="text-3xl font-semibold text-highlighted sm:text-4xl">
-              一个用于祭扫自己的开源小网页
+          <div class="space-y-3 px-0.5">
+            <h1 class="text-3xl font-extrabold noto-serif text-highlighted sm:text-4xl">
+              一个用于在线祭扫的开源小网页
             </h1>
             <p class="text-base leading-8 text-toned">
-              这项目一人加一Codex写的，就是为了发癫用，没别的
+              这项目是一人加一Codex写的，本来想拿来清明节祭自己的，纯发癫没别的
             </p>
             <p class="text-base leading-8 text-toned">
               这玩意是开源的，你也可以加入我们一起发癫（贡献）
             </p>
           </div>
 
-          <u-button to="https://github.com/xhanhh/OneselfWorship" target="_blank" icon="i-mdi-github">查看GitHub</u-button>
+          <u-button
+              to="https://github.com/xhanhh/OneselfWorship"
+              target="_blank"
+              icon="i-mdi-github"
+          >查看GitHub</u-button>
         </div>
       </UCard>
     </div>

@@ -27,5 +27,11 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
     '@vueuse/nuxt',
     'dayjs-nuxt'
-  ]
+  ],
+
+  fonts: {
+    defaults: {
+      weights: [400, 500, 600, 700, 800],
+    }
+  },
 })

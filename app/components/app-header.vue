@@ -27,7 +27,7 @@ const items = computed<NavigationMenuItem[]>(() => [
   <UHeader>
     <template #title>
       <div class="flex items-center">
-        <span>祭念自己</span>
+        <span>祭自己</span>
       </div>
     </template>
 

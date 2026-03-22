@@ -160,13 +160,6 @@ function handlePageSizeChange(value: number | undefined) {
 }
 
 function handleCreated() {
-  toast.add({
-    title: '祭扫已创建',
-    description: '列表已经刷新，可直接查看。',
-    color: 'success',
-    icon: 'i-lucide-circle-check-big'
-  })
-
   if (searchMine.value) {
     if (appliedMineEmail.value && appliedSearchAccessToken.value) {
       refreshList()

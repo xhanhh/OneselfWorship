@@ -1,17 +1,12 @@
 import { createHash } from 'node:crypto'
-import { getRequestHeader, getRequestIP, getRouterParam, readBody } from 'h3'
+import { getRequestHeader, getRequestIP, getRouterParam } from 'h3'
 import prisma from '~~/server/utils/prisma'
-import type { CreateTributeRequest } from '~~/app/types/Request'
 import type { CreateTributeResponseData } from '~~/app/types/Response'
 import { notFound, requireIntegerRouteParam, successResponse } from '#server/utils/api'
 import { memorialSelect, toMemorialDetailItem } from '#server/utils/memorial'
-import { assertTurnstileToken } from '#server/utils/turnstile'
 
 export default defineEventHandler(async (event) => {
   const id = requireIntegerRouteParam(getRouterParam(event, 'id'), 'id')
-  const body = await readBody<Partial<CreateTributeRequest>>(event)
-
-  await assertTurnstileToken(body?.turnstileToken)
 
   const targetMemorial = await prisma.memorial.findFirst({
     where: {

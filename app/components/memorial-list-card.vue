@@ -23,7 +23,7 @@ const time = useTime()
     <template #header>
       <NuxtLink :to="`/memorials/${props.memorial.id}`" class="block transition-transform duration-200 hover:-translate-y-0.5">
         <div class="flex items-start justify-between gap-2">
-          <h2 class="min-w-0 flex-1 truncate pr-2 text-lg font-semibold leading-tight text-highlighted sm:text-base">
+          <h2 class="min-w-0 flex-1 truncate pr-2 text-xl noto-serif font-extrabold leading-tight text-highlighted">
             {{ props.memorial.name }}
           </h2>
 

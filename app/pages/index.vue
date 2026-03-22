@@ -67,26 +67,26 @@ function handleCreated() {
         <UCard class="flex flex-col gap-4 rounded-2xl from-primary/8 via-elevated to-secondary/15 p-5 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
           <div class="max-w-3xl space-y-2">
             <UBadge color="primary" variant="soft" label="清明祭扫" />
-            <h1 class="text-3xl font-semibold sm:text-4xl">
+            <h1 class="text-3xl font-extrabold noto-serif sm:text-4xl">
               为思念留一处祭扫的缅怀空间
             </h1>
-            <p class="text-sm text-muted sm:text-base">
+            <p class="text-sm text-muted px-1 sm:text-base">
               可建立祭扫追忆，与其他人共同缅怀先人，也可以是自己。
             </p>
           </div>
 
-          <div class="flex flex-col gap-3 pt-4 sm:flex-row">
+          <div class="flex flex-col gap-3 pt-4 px-0.5 sm:flex-row">
             <UButton
               to="/memorials"
               color="primary"
-              size="xl"
+              size="lg"
               variant="solid"
               icon="i-lucide-search"
               label="前往祭扫"
             />
             <UButton
               color="neutral"
-              size="xl"
+              size="lg"
               variant="subtle"
               icon="i-lucide-plus"
               label="新祭扫"
@@ -96,10 +96,10 @@ function handleCreated() {
         </UCard>
       </section>
 
-      <section class="space-y-4">
+      <section class="space-y-4 px-2 sm:px-4 md:px-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 class="text-2xl font-semibold text-highlighted sm:text-3xl">多人祭扫</h2>
+            <h2 class="text-2xl font-semibold text-highlighted sm:text-2xl">多人祭扫</h2>
             <p class="mt-1 text-sm text-muted sm:text-base">
               当前祭扫次数前六的祭奠
             </p>

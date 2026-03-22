@@ -26,10 +26,6 @@ export interface QueryMemorialsByEmailRequest {
   contactEmail: string
 }
 
-export interface CreateTributeRequest {
-  turnstileToken: string
-}
-
 export interface SearchMemorialAccessRequest {
   contactEmail: string
   turnstileToken: string
