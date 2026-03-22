@@ -81,6 +81,15 @@ onBeforeUnmount(() => {
   }
 })
 
+function handleBack() {
+  if (import.meta.client && window.history.length > 1) {
+    router.back()
+    return
+  }
+
+  router.push('/')
+}
+
 async function handleCopyLink() {
   if (!copySupported.value) {
     toast.add({
@@ -233,7 +242,7 @@ function onlyCopyLink() {
     <div class="space-y-6">
       <div class="flex flex-wrap items-center gap-3">
         <UButton
-          @click="router.back"
+          @click="handleBack"
           color="neutral"
           variant="ghost"
           icon="i-lucide-arrow-left"

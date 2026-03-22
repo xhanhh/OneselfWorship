@@ -108,7 +108,7 @@ function getErrorMessage(error: unknown) {
   <UModal
     v-model:open="open"
     title="新建祭扫"
-    description="为ta祭扫"
+    description="为ta祭扫，请注意遵守当地法律"
     :dismissible="!isSubmitting"
     :close="!isSubmitting"
     :ui="{ content: 'sm:max-w-2xl' }"
